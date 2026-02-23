@@ -1,0 +1,28 @@
+/* Line clamp para descripciones */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth hover transitions */
+app-home article,
+app-home div {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focus visible para accesibilidad */
+app-home a:focus-visible,
+app-home button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.5);
+}
+
+/* Reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+  app-home * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

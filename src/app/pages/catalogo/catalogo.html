@@ -1,0 +1,107 @@
+<!-- ✅ Catálogo - Solo Estilos Mejorados -->
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900 transition-colors duration-300">
+  
+  <!-- Header Section -->
+  <div class="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 dark:from-blue-900 dark:via-indigo-900 dark:to-purple-900 overflow-hidden">
+    
+    <!-- Pattern (CSS puro, sin errores) -->
+    <div class="absolute inset-0 opacity-10" 
+         style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0); background-size: 40px 40px;">
+    </div>
+    
+    <div class="container px-6 py-16 mx-auto relative z-10">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-4xl md:text-5xl font-black text-white leading-tight mb-4">
+          Nuestros Destinos en <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">Ecuador</span>
+        </h1>
+        <p class="text-lg text-white/80 mb-8">
+          Descubre lugares increíbles y vive experiencias inolvidables
+        </p>
+        
+        <!-- Search Input -->
+        <div class="relative max-w-xl mx-auto">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input 
+            type="text" 
+            [(ngModel)]="filtro" 
+            placeholder="¿A dónde quieres ir?" 
+            class="w-full pl-12 pr-4 py-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-0 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-lg">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Wave Divider -->
+    <div class="absolute bottom-0 left-0 right-0">
+      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-16 md:h-20">
+        <path d="M0 32L60 29.3C120 27 240 21 360 18.7C480 16 600 16 720 18.7C840 21 960 27 1080 29.3C1200 32 1320 32 1380 32L1440 32V80H1380C1320 80 1200 80 1080 80C960 80 840 80 720 80C600 80 480 80 360 80C240 80 120 80 60 80H0V32Z" fill="currentColor" class="text-slate-50 dark:text-gray-900"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Cards Grid Section -->
+  <div class="container px-6 py-12 mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      @for (v of viajesFiltrados; track v.id) {
+        <div class="group bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          
+          <!-- Image Container -->
+          <div class="relative aspect-[4/3] overflow-hidden">
+            <img [src]="v.imagen" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" [alt]="v.destino">
+            
+            <!-- Offer Badge -->
+            @if (v.oferta) { 
+              <span class="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                🔥 ¡OFERTA!
+              </span> 
+            }
+          </div>
+          
+          <!-- Content -->
+          <div class="p-5">
+            <!-- Category -->
+            <small class="text-blue-600 dark:text-blue-400 uppercase tracking-wide text-xs font-semibold">{{ v.categoria }}</small>
+            
+            <!-- Destination Name -->
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white my-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              {{ v.destino }}
+            </h3>
+            
+            <!-- Rating -->
+            <div class="flex items-center gap-1 mb-3">
+              @for (estrella of [].constructor(v.estrellas); track estrella) {
+                <span class="text-yellow-400 text-sm">⭐</span>
+              }
+              <span class="text-sm text-gray-500 dark:text-gray-400 ml-1">({{ v.estrellas }})</span>
+            </div>
+            
+            <!-- Price -->
+            <p class="text-2xl font-black text-green-500 dark:text-green-400 mb-4">
+              ${{ v.precio }} 
+              <span class="text-xs font-normal text-gray-400">/ persona</span>
+            </p>
+            
+            <!-- Button -->
+            <button 
+              class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-lg active:scale-95" 
+              (click)="agregarReserva(v)">
+              Reservar Ahora
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Empty State -->
+    @if (viajesFiltrados.length === 0) {
+      <div class="text-center py-16">
+        <svg class="w-20 h-20 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="text-gray-500 dark:text-gray-400">No se encontraron destinos</p>
+      </div>
+    }
+  </div>
+</div>

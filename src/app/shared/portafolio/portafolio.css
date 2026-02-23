@@ -1,0 +1,53 @@
+/* Smooth transitions */
+app-portafolio article {
+  will-change: transform;
+}
+
+/* Image hover zoom container fix */
+.aspect-\[4\/3\] {
+  contain: layout;
+}
+
+/* Line clamp for titles/descriptions */
+.line-clamp-1 {
+  display: -webkit-box;
+
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom scrollbar for filters on mobile */
+@media (max-width: 1024px) {
+  aside {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+  aside::-webkit-scrollbar {
+    width: 6px;
+  }
+  aside::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  aside::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 3px;
+  }
+}
+
+/* Reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible for accessibility */
+app-portafolio button:focus-visible,
+app-portafolio a:focus-visible,
+app-portafolio input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.5);
+}

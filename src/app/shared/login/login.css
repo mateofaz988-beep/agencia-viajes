@@ -1,0 +1,44 @@
+/* Animación de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-white.dark\:bg-gray-800 {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+/* Focus ring personalizado */
+.dark input:focus {
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+}
+
+/* Checkbox custom */
+input[type="checkbox"] {
+  accent-color: #2563eb;
+}
+
+/* Button hover effect */
+button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

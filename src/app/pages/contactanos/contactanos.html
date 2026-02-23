@@ -1,0 +1,104 @@
+<app-hero 
+  titulo="Estamos para" 
+  resaltado="AYUDARTE" 
+  imagenUrl="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?q=80&w=2074">
+</app-hero>
+
+<section class="bg-white py-20">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+            
+            <div class="space-y-10">
+                <div>
+                    <h2 class="text-4xl font-black text-blue-900 uppercase italic leading-none">Habla con nosotros</h2>
+                    <div class="h-1 w-20 bg-blue-500 mt-4"></div>
+                    <p class="text-gray-600 mt-6 text-lg">
+                        En **AIR593** valoramos tu tiempo. Ya sea que busques un presupuesto a medida o tengas dudas sobre una reserva existente, nuestro equipo de expertos está a un clic de distancia.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                        <span class="text-2xl">📍</span>
+                        <h4 class="font-bold text-gray-800 mt-2">Matriz Quito</h4>
+                        <p class="text-gray-500 text-sm">Av. de los Shyris y Naciones Unidas, Edificio Signature.</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                        <span class="text-2xl">📞</span>
+                        <h4 class="font-bold text-gray-800 mt-2">Atención 24/7</h4>
+                        <p class="text-gray-500 text-sm">WhatsApp: +593 98 765 4321<br>Telf: (02) 222-333</p>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-8 rounded-[2rem]">
+                    <h4 class="font-black text-blue-900 uppercase mb-4">Horarios de Oficina</h4>
+                    <ul class="space-y-2 text-blue-800/80">
+                        <li class="flex justify-between"><span>Lunes a Viernes:</span> <strong>09:00 - 18:30</strong></li>
+                        <li class="flex justify-between"><span>Sábados:</span> <strong>10:00 - 14:00</strong></li>
+                        <li class="flex justify-between"><span>Domingos:</span> <strong>Cerrado (Solo emergencias)</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 relative z-10">
+                    <form (ngSubmit)="enviarFormulario()" #f="ngForm" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="text-xs font-bold uppercase text-gray-400 ml-2">Nombre</label>
+                                <input type="text" name="nombre" [(ngModel)]="contacto.nombre" required
+                                       class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold uppercase text-gray-400 ml-2">Email</label>
+                                <input type="email" name="email" [(ngModel)]="contacto.email" required email
+                                       class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold uppercase text-gray-400 ml-2">Asunto</label>
+                            <select name="asunto" [(ngModel)]="contacto.asunto"
+                                    class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none">
+                                <option>Información General</option>
+                                <option>Presupuesto Personalizado</option>
+                                <option>Reclamos y Sugerencias</option>
+                                <option>Alianzas Comerciales</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold uppercase text-gray-400 ml-2">Mensaje</label>
+                            <textarea name="mensaje" [(ngModel)]="contacto.mensaje" rows="4" required
+                                      class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                      placeholder="Cuéntanos tus planes de viaje..."></textarea>
+                        </div>
+
+                        <button type="submit" [disabled]="!f.valid || enviando"
+                                class="w-full py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 disabled:bg-gray-300">
+                            <span *ngIf="!enviando">Enviar Mensaje</span>
+                            <span *ngIf="enviando">Procesando...</span>
+                        </button>
+                    </form>
+                </div>
+                <div class="absolute -top-10 -right-10 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-50 -z-0"></div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<section class="max-w-7xl mx-auto px-6 mb-20">
+    <div class="w-full h-96 bg-gray-200 rounded-[3rem] overflow-hidden shadow-inner relative">
+        <img src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1974" 
+             class="w-full h-full object-cover grayscale opacity-50">
+        <div class="absolute inset-0 flex items-center justify-center">
+            <div class="bg-white p-6 rounded-2xl shadow-2xl text-center border border-blue-100">
+                <p class="font-bold text-blue-900">Nuestras Oficinas Centrales</p>
+                <p class="text-gray-500 text-sm">Quito - Sector santa barbara</p>
+                <a href="https://maps.google.com" target="_blank" class="text-blue-500 text-xs font-bold uppercase mt-2 block hover:underline">Ver en Google Maps</a>
+            </div>
+        </div>
+    </div>
+</section>
