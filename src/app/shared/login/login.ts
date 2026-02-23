@@ -12,16 +12,15 @@ import { AuthService } from '../../services/auth-service/auth-service';
   styleUrl: './login.css'
 })
 export class Login {
-  
   // ✅ Inyección de dependencias
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  
+
   // ✅ Propiedades del formulario
   email: string = '';
   password: string = '';
   rememberMe: boolean = false;
-  
+
   // ✅ Estados de UI
   loading: boolean = false;
   errorMessage: string = '';
@@ -37,13 +36,13 @@ export class Login {
   }
 
   get formIsValid(): boolean {
-    return this.email.trim().length > 0 && 
-           this.password.length >= 6 && 
-           this.isEmailValid;
+    return this.email.trim().length > 0 &&
+      this.password.length >= 6 &&
+      this.isEmailValid;
   }
 
-  // ✅ Método principal de login
-  async iniciarsecion(): Promise<void> {
+  // ✅ Método principal de login - SIN async/await
+  iniciarsecion(): void {
     // 1. Validación previa
     if (!this.formIsValid) {
       this.errorMessage = this.getValidationError();
@@ -55,45 +54,53 @@ export class Login {
     this.loading = true;
     this.errorMessage = '';
 
-    try {
-      // 3. Ejecutar login con tu AuthService
-      this.authService.login(this.email.trim(), this.password).subscribe({
-        next: (success: boolean) => this.handleLoginSuccess(success),
-        error: (error: any) => this.handleLoginError(error)
-      });
-
-    } catch (error) {
-      this.handleLoginError(error);
-      this.loading = false;
-    }
+    // 3. Ejecutar login con tu AuthService
+    // ✅ SIN async/await - solo subscribe
+    this.authService.login(this.email.trim(), this.password).subscribe({
+      next: (success: boolean) => {
+        if (success) {
+          this.handleLoginSuccess();
+        } else {
+          this.handleLoginFailed();
+        }
+      },
+      error: (error: any) => {
+        this.handleLoginError(error);
+      }
+      // ✅ No necesitamos 'complete' porque ya manejamos loading en cada caso
+    });
   }
 
-  // ✅ Handler para respuesta exitosa
-  private handleLoginSuccess(success: boolean): void {
-    if (success) {
-      // Feedback visual
-      this.showNotification('¡Bienvenido! 🎉', 'success');
-      
-      // Obtener datos del usuario
-      const usuario = this.authService.getUsuarioActual();
-      
-      // Persistencia según preferencia
-      this.persistSession(usuario);
-      
-      // 🔥 Redirección por rol
-      this.redirectByRole(usuario?.rol);
-      
-    } else {
-      this.errorMessage = 'Credenciales incorrectas. Verifica tu email y contraseña.';
-      this.password = '';
-      this.loading = false;
-    }
+  // ✅ Handler para respuesta exitosa - AHORA SÍ resetea loading
+  private handleLoginSuccess(): void {
+    // Feedback visual
+    this.showNotification('¡Bienvenido! 🎉', 'success');
+
+    // Obtener datos del usuario
+    const usuario = this.authService.getUsuarioActual();
+
+    // Persistencia según preferencia
+    this.persistSession(usuario);
+
+    // ✅ IMPORTANTE: Resetear loading ANTES de redirigir
+    this.loading = false;
+
+    // ✅ Redirección por rol - SIN setTimeout
+    this.redirectByRole(usuario?.rol);
   }
 
-  // ✅ Handler para errores
+  // ✅ Handler para credenciales incorrectas
+  private handleLoginFailed(): void {
+    this.errorMessage = 'Credenciales incorrectas. Verifica tu email y contraseña.';
+    this.password = '';
+    this.loading = false; // ✅ Resetear loading
+    this.shakeForm();
+  }
+
+  // ✅ Handler para errores de servidor/red
   private handleLoginError(error: any): void {
     console.error('Login error:', error);
-    
+
     if (error?.status === 0) {
       this.errorMessage = 'No hay conexión con el servidor. Verifica tu internet.';
     } else if (error?.status === 401) {
@@ -103,9 +110,9 @@ export class Login {
     } else {
       this.errorMessage = 'Error al iniciar sesión. Intenta más tarde.';
     }
-    
+
+    this.loading = false; // ✅ Resetear loading
     this.shakeForm();
-    this.loading = false;
   }
 
   // ✅ Persistencia de sesión
@@ -123,15 +130,13 @@ export class Login {
     }
   }
 
-  // ✅ Redirección por roles
+  // ✅ Redirección por roles - SIN setTimeout
   private redirectByRole(rol?: string): void {
-    setTimeout(() => {
-      if (rol === 'ADMIN') {
-        this.router.navigateByUrl('/admin', { replaceUrl: true });
-      } else {
-        this.router.navigateByUrl('/gestion', { replaceUrl: true });
-      }
-    }, 800);
+    if (rol === 'ADMIN') {
+      this.router.navigateByUrl('/admin', { replaceUrl: true });
+    } else {
+      this.router.navigateByUrl('/gestion', { replaceUrl: true });
+    }
   }
 
   // ✅ Toggle visibilidad de contraseña
@@ -147,7 +152,7 @@ export class Login {
     return '';
   }
 
-  // ✅ Notificación personalizada (reemplaza alert)
+  // ✅ Notificación personalizada
   private showNotification(message: string, type: 'success' | 'error' = 'error'): void {
     const toast = document.createElement('div');
     toast.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-xl shadow-lg transform transition-all duration-300 ${
@@ -156,8 +161,11 @@ export class Login {
     toast.innerHTML = `
       <div class="flex items-center gap-3">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-            d="${type === 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${
+            type === 'success' 
+              ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' 
+              : 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+          }" />
         </svg>
         <span class="font-medium">${message}</span>
       </div>

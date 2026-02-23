@@ -1,83 +1,70 @@
-import { Component, inject, Injectable, signal } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, of, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { UsuarioServicio } from '../usuario-servicio/usuario-servicio';
 
-@Component({
-  selector: 'app-auth-service',
-  imports: [],
-  templateUrl: './auth-service.html',
-  styleUrl: './auth-service.css',
-})
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthService {
-
   private servicioUsuario = inject(UsuarioServicio);
 
-  ///localStorage
+  // Signals para estado reactivo
   sesioniniciada = signal<boolean>(localStorage.getItem('sesioniniciada') === 'true');
-
-
-
-  // private auth = getAuth();
-
-
-  //accdemos al rol del usuario
   rolActual = signal<string | null>(localStorage.getItem('rol'));
 
+  // ✅ Login con manejo de errores
   login(email: string, password: string): Observable<boolean> {
-
     return this.servicioUsuario.getUsuarios().pipe(
-      map(Usuarios => {
-        const usuarioCoincide = Usuarios.find(u => u.email === email && u.password === password);
+      map((usuarios: any[]) => {
+        const usuarioCoincide = usuarios.find(
+          u => u.email === email && u.password === password
+        );
+
         if (usuarioCoincide) {
           localStorage.setItem('sesioniniciada', 'true');
-          //guardar estos datos conviritiendo el objeto json a texto
           localStorage.setItem('usuario', JSON.stringify(usuarioCoincide));
-
-
-          ///guardar el rol
-
           localStorage.setItem('rol', usuarioCoincide.rol);
+          
           this.rolActual.set(usuarioCoincide.rol);
-
           this.sesioniniciada.set(true);
+          
+          console.log('✅ Login exitoso:', usuarioCoincide.email);
           return true;
         }
+
+        console.log('❌ Credenciales incorrectas');
         return false;
+      }),
+      // ✅ CRÍTICO: Si hay error, retornar false en lugar de lanzar error
+      catchError((error: any) => {
+        console.error('❌ Error en login:', error);
+        return of(false);
       })
-    )
-
-    //signInWithEmailAndPassword(this.auth,email,password)
-    //.then(respuesta => this.usuario =respuesta.user)
-    //.catch(err => console.error('No puede iniciar sesion', err.message));
-
+    );
   }
 
-  logout() {
-
-    // signOut(this.auth);
-    //this.usuario=null;
+  logout(): void {
     localStorage.removeItem('sesioniniciada');
     localStorage.removeItem('usuario');
-
-    //rolesxd
     localStorage.removeItem('rol');
+    
     this.rolActual.set(null);
     this.sesioniniciada.set(false);
+    
+    console.log('👋 Sesión cerrada');
   }
-  //rolesxd implementacion de guardianes
 
-  getUsuarioActual() {
-  return JSON.parse(localStorage.getItem('usuario') || 'null');
-}
+  getUsuarioActual(): any {
+    const usuarioStr = localStorage.getItem('usuario');
+    return usuarioStr ? JSON.parse(usuarioStr) : null;
+  }
 
-esAdmin(): boolean {
-  return this.rolActual()?.toUpperCase() === 'ADMIN';
-}
+  esAdmin(): boolean {
+    return this.rolActual()?.toUpperCase() === 'ADMIN';
+  }
 
-estaAutenticado(): boolean {
-  return this.sesioniniciada();
-}
+  estaAutenticado(): boolean {
+    return this.sesioniniciada();
+  }
 }
